@@ -19,6 +19,9 @@ def main(args):
         fileName = args.file
     else:
         fileName = ''
+    if '"' in localPATH:
+        remotePATH = localPATH.split('"')[1][4:]
+        localPATH = localPATH.split('"')[0] + os.sep
 
     makeConnection(localPATH, remotePATH, host, username, password, port, fileName)
 
@@ -52,7 +55,7 @@ def putFiles(localPATH, remotePATH, sftp_client, fileName):
             remotePATH = ''
 
         # walks through localPath transfering each file
-        for root, dir, file, in os.walk(args.localPath):
+        for root, dir, file, in os.walk(localPATH):
             for fname in file:
                 sftp_client.put(root + fname, fname)
                 count += 1
@@ -88,7 +91,6 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--port', type=int, default='22', help='Port if no 22')
     # parser.add_argument('-D', '--debug', action='count', help='Debugging is True')
     # parser.add_argument('-r', '--RSA', help='Pass RSA Key')
-
     args = parser.parse_args()
 
     if args.host != '':
